@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWM generator and analyzer</title>
+</head>
+<body>
+    <h1>PWM generator and analyzer</h1>
+    <p style="font-size: 25px;">1.Requirements:</p>
+    <p>• The system shall have 4 different channel who can be analyzed.<br>
+       • The system shall allow changing the displayed characteristics using a push button.<br>
+       • If the signal is continuously on then the system should display „On”.<br>
+       • If the signal is continuously off then the system should display „Off”.<br>
+       • The system shall work correctly for T>=10ms.<br>
+       • The system shall work correctly for T&lt;=5000ms.<br>
+       • The system shall update LCD every less than 10ms.<br>
+       • The system shall generate a PWM signal.<br>
+       • The system shall allow users to modify the FU value of PWM using serial communication.<br>
+       • The system shall allow users to modify the T value of PWM using serial communication.<br>
+       • The system shall allow users to enable generating PWM signal.<br>
+       • The system shall allow users to disable generating PWM signal.
+    </p>
+
+    <p style="font-size: 25px;">2.Architecture:</p>
+    <p style="font-size: 22px;">State machine select channel:</p>
+    <img src="images_video/State_machine_select_channel.png" width="500" height="300">
+    <p style="font-size: 22px;">State machine display channel:</p>
+    <img src="images_video/State_machine_display_channel.png" width="500" height="400">
+    <p style="font-size: 22px;">USART guide:</p>
+    <p>Four types of instructions have effects in the environment of the project:<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;• enable generation pwm: transmit “on”;<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;• disable generation pwm: transmit “off”;<br> 
+       &nbsp;&nbsp;&nbsp;&nbsp;• change number of up pulses: transmit “F” and then the number, ex: “F30”, “T35”;<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;• change value of period: transmit “T” and then the number, ex: “T200”, “T300”.<br>
+       Internal processes:<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;• If F transmitted &lt; 0 then F=0;<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;• If F transmitted > T then F=T;<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;• If T transmitted &lt;10 then T=10;<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;• If T transmitted > 5000 then T=5000.<br>
+       Serial communication must have below settings:
+    </p>
+    <img src="images_video/terminal_settings.png" width="400" height="300">
+
+    <p style="font-size: 25px;">3.Implementation:</p>
+    <img src="images_video/main_function.png" width="400" height="400">
+    <p style="font-size: 22px;">Loop:</p>
+    <p>
+       &nbsp;&nbsp;&nbsp;&nbsp;1. Evaluate the state of the buttons.<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;2. If any button is pressed change the channel/view according to architecture diagrams.<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;3. Check if any new USART command is received and respects the specification from via USART.<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;4, If the command is spelled correctly, modify the variables accordingly.<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;5. Update the display with the current information: channel, view, measured value.<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;6. Generate the PWM signal with the parameters specified by user.<br>
+       &nbsp;&nbsp;&nbsp;&nbsp;7. Analyze the PWM from the specified pin(using buttons).
+    </p>
+
+    <p style="font-size: 25px;">4.Testing:</p>
+    <p style="font-size: 22px;">Testing state machines:</p>
+    <video width="500" height="300" controls>
+        <source src="images_video/state_machines.mp4" type="video/mp4">
+    </video>
+    <p style="font-size: 22px;">Testing USART messages and display measurements:</p>
+    <video width="500" height="300" controls>
+        <source src="images_video/USART_values.mp4" type="video/mp4">
+    </video>
+</body>
+</html>
